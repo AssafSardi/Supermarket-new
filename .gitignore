@@ -1,0 +1,75 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+.env/
+.env.*
+
+# FastAPI + Python packaging
+*.egg-info/
+dist/
+build/
+
+# PyCharm settings
+.idea/
+
+# VSCode settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage / testing
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Docker
+**/__pycache__/
+**/*.py[cod]
+**/env/
+**/venv/
+**/.venv/
+**/.env
+docker-compose.override.yml
+*.pid
+
+# Docker volumes
+volumes/
+data/
+db-data/
+postgres-data/
+
+# SQLite (if ever used for dev)
+*.sqlite3
+
+# Jupyter (if ever used)
+.ipynb_checkpoints/
+
+# Miscellaneous
+*.swp
+*.swo

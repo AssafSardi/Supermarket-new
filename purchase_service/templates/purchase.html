@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Supermarket Purchase</title>
+</head>
+<body>
+    <h2>New Purchase</h2>
+    <form action="/api/v1/customer/purchase" method="post" onsubmit="return validateForm()">
+        <label>Already exists user?</label><br>
+        <input type="radio" name="existing" value="no" id="existingNo" checked> No<br>
+        <input type="radio" name="existing" value="yes" id="existingYes"> Yes
+        <div id="userIdContainer" style="display:none;">
+            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user_id: </label>
+            <select name="user_id" id="user_id">
+                <option value="">Select</option>
+                {% for user in users %}
+                <option value="{{ user }}">{{ user }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <br><br><label>Supermarket:</label>
+        <select name="supermarket_id" id="supermarket_id" required>
+            <option value="">Select</option>
+            {% for smkt in supermarkets %}
+            <option value="{{ smkt }}">{{ smkt }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Select Products:</label><br>
+        {% for product_name, unit_price in products %}
+          <input type="checkbox" name="items" value="{{ product_name }}"> {{ product_name }}, {{ unit_price }}<br>
+        {% endfor %}
+
+        <br><button type="submit">Purchase</button>
+    </form>
+
+    <script>
+        // Function to toggle user_id field visibility
+        function toggleUserIdField() {
+            const yesRadio = document.getElementById('existingYes');
+            const userIdContainer = document.getElementById('userIdContainer');
+
+            if (yesRadio.checked) {
+                userIdContainer.style.display = 'block';
+            } else {
+                userIdContainer.style.display = 'none';
+            }
+        }
+
+        // Attach event listeners to the radio buttons
+        document.getElementById('existingNo').addEventListener('change', toggleUserIdField);
+        document.getElementById('existingYes').addEventListener('change', toggleUserIdField);
+
+        // Initialize visibility on page load
+        window.onload = toggleUserIdField;
+
+        // Function to validate the form before submitting
+        function validateForm() {
+            let flag = true;
+            const existing = document.querySelector('input[name="existing"]:checked').value;
+            const user_id = document.getElementById("user_id").value;
+            const supermarket_id = document.getElementById('supermarket_id').value;
+            const items = document.querySelectorAll('input[name="items"]:checked');
+
+            if (existing === "yes" && user_id.trim() === "") {
+                alert("Please enter you user_id if you're an existing user");
+                flag = false;
+            }
+            if (!supermarket_id) {
+                alert("Please select a supermarket");
+                flag = false;
+            }
+            if (items.length === 0) {
+                alert("Please select at least one product");
+                flag = false;
+            }
+
+            return flag;
+        }
+    </script>
+</body>
+</html>

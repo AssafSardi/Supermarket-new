@@ -1,0 +1,70 @@
+#version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: supermarket
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - pgdata:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+#  db_test:
+#    image: postgres:15
+#    container_name: postgres_test
+#    environment:
+#      POSTGRES_DB: supermarket_test
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#    ports:
+#      - "5433:5432"
+
+  purchase-service:
+    build:
+      context: ./purchase_service
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/supermarket
+    command: ["./wait-for-db.sh", "db", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  owner-service:
+    build:
+      context: ./owner_service
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "8002:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/supermarket
+    command: ["./wait-for-db.sh", "db", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+#  test-runner:
+#    build:
+#      context: .
+#    environment:
+#      TEST_DATABASE_URL: postgresql://postgres:postgres@db_test:5432/supermarket_test
+#    depends_on:
+#      - db_test
+#    volumes:
+#      - .:/app
+#    working_dir: /app
+#    command:
+#      ["./wait-for-db.sh", "db_test", "sh", "-c", "python test_runner/init_test_db.py && pytest test_runner/"]
+##      >
+##      sh -c "python test_runner/init_test_db.py && pytest test_runner/"
+
+volumes:
+  pgdata:

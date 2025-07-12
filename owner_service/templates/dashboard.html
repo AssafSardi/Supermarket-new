@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Supermarket Owner Dashboard</title>
+</head>
+<body>
+    <h2>Owner Dashboard</h2>
+    <label>Operations:</label><br>
+    <button onclick="fetchData('/api/v1/owner/unique-customers')">Get Unique Customers</button><br>
+    <button onclick="fetchData('/api/v1/owner/loyal-customers')">Get Loyal Customers</button><br>
+    <button onclick="fetchData('/api/v1/owner/top-products')">Get Top Products</button><br><br>
+
+    <div id="response" class="response-box"></div>
+
+    <script>
+        // Function to make an API request
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(endpoint);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let html = ''
+
+                // Manipulate the data
+                if (endpoint === '/api/v1/owner/unique-customers') {
+                    html += `<h3>Unique Customers</h3>`;
+                    html += `<p>Total unique customers: <strong>${data.unique_customers}</strong></p>`;
+                } else if (endpoint === '/api/v1/owner/loyal-customers') {
+                    html += `<h3>Loyal Customers</h3>`;
+                    html += `<p>Number of loyal customers: <strong>${data.loyal_customers.total}</strong></p>`;
+                    html += `<ul>`;
+
+                    data.loyal_customers.customers.forEach(customer => {
+                        html += `<li>User ID: ${customer.user_id}</li>`;
+                    });
+
+                    html += `</ul>`;
+                } else if (endpoint === '/api/v1/owner/top-products') {
+                    html += `<h3>Top ${data.top_products.length} Products</h3>`;
+                    html += `<ol>`;
+
+                    data.top_products.forEach(product => {
+                        html += `<li>${product.product_name}, ${product.times_was_purchased}</li>`;
+                    });
+
+                    html += `</ol>`;
+                }
+
+                document.getElementById('response').innerHTML = html;
+            } catch (error) {
+                document.getElementById('response').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+
+            }
+        }
+
+    </script>
+</body>
+</html>
