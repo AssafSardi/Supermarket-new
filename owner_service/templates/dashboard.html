@@ -42,6 +42,8 @@
                     html += `</ul>`;
                 } else if (endpoint === '/api/v1/owner/top-products') {
                     html += `<h3>Top ${data.top_products.length} Products</h3>`;
+                    html += `<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;rank&gt;. &lt;product_name&gt;, &lt;times_was_purchased&gt;</p>`;
+
                     html += `<ol>`;
 
                     data.top_products.forEach(product => {
